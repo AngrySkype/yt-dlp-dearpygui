@@ -43,12 +43,15 @@ def search_bar(sender,app_data):
     print(f"url : ", URL)
 
 def analyze_button():
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(URL, download=False)
-        uploader, duration, like, comment = f"Uploader: {info['uploader']}", f"Duration: {info['duration']} seconds", f"Like: {info['like_count']}", f"Comments: {info['comment_count']}"
-        s_n = uploader, duration, like, comment
-        dpg.set_value("analyze_title_result", f"Title: {info['title']}")
-        dpg.set_value("analyze_result",'\n'.join(s_n))
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(URL, download=False)
+            uploader, duration, like, comment = f"Uploader: {info['uploader']}", f"Duration: {info['duration']} seconds", f"Like: {info['like_count']}", f"Comments: {info['comment_count']}"
+            s_n = uploader, duration, like, comment
+            dpg.set_value("analyze_title_result", f"Title: {info['title']}")
+            dpg.set_value("analyze_result",'\n'.join(s_n))
+    except Exception as e:
+        notification(message=f"{e}")
 
 
 def download_button():
