@@ -1,5 +1,10 @@
 import yt_dlp
 import dearpygui.dearpygui as dpg
+import threading
+from pydub import AudioSegment
+from pydub.playback import play
+
+audio = AudioSegment.from_mp3("Sounds/finish.mp3")
 
 URL = ""
 CODEC = ["Video","Audio"]
@@ -21,11 +26,13 @@ def progress_hook(d):
     elif d['status'] == 'finished':
         notification(message=f"Download Finished!")
         dpg.configure_item("progress",show=False)
+        play(audio)
 
 ydl_opts = {
     'format': '',
     'outtmpl': f'{output_dir}/%(title)s.%(ext)s',
-    'progress_hooks': [progress_hook]
+    'progress_hooks': [progress_hook],
+    'writethumbnail': True
 }
 
 def codec_list(sender,data):
@@ -89,4 +96,4 @@ if __name__ == "__main__":
 #[x] - being able to change codec from combolist
 #[x] - add more info to analyze input
 #[] - show thumbnail
-#[] - add finished sound
+#[x] - add finished sound
