@@ -1,6 +1,5 @@
 import yt_dlp
 import dearpygui.dearpygui as dpg
-import threading
 from pydub import AudioSegment
 from pydub.playback import play
 

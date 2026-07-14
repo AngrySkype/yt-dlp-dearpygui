@@ -14,24 +14,25 @@ A minimal YouTube downloader built with **Python**, **Dear PyGui**, and **yt-dlp
 * Show comment count
 * Download the best available video quality
 * Download audio only
+* Play a notification sound when a download finishes
 * Real-time download progress bar
 * Simple and lightweight desktop interface
 
 ## Planned Features
 
 * Display video thumbnail
-* Play a notification sound when a download finishes
 
 ## Requirements
 
 * Python 3.10+
 * `yt-dlp`
 * `dearpygui`
+* `pydub`
 
 Install the dependencies:
 
 ```bash
-pip install yt-dlp dearpygui
+pip install yt-dlp dearpygui pydub
 ```
 
 Downloaded files are saved in the `SavedFiles/` directory.
