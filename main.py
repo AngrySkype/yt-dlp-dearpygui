@@ -6,7 +6,9 @@ from pydub.playback import play
 audio = AudioSegment.from_mp3("Sounds/finish.mp3")
 
 URL = ""
-CODEC = ["Video","Audio"]
+TYPE = ["Video","Audio"]
+RESOLUTION = ["2160", "1440", "1080", "720", "480"]
+BITRATES = ["64","128","192","320"]
 output_dir = 'SavedFiles'
 
 def notification(message: str, modal: bool = True):
@@ -28,20 +30,37 @@ def progress_hook(d):
         play(audio)
 
 ydl_opts = {
-    'format': '',
     'outtmpl': f'{output_dir}/%(title)s.%(ext)s',
     'progress_hooks': [progress_hook],
-    'writethumbnail': True
+    'writethumbnail': False,
 }
 
-def codec_list(sender,data):
-    if data == CODEC[0]:
-        print(f"Codec selected : {CODEC[0]}")
-        ydl_opts["format"] = 'best'
-        
-    if data == CODEC[1]:
-        print(f"Codec selected : {CODEC[1]}")
-        ydl_opts["format"] = 'bestaudio'
+def resolution_list(sender, data):
+    ydl_opts["format"] = f"bestvideo[height<={data}]+bestaudio/best"
+
+def bitrate_list(sender, data):
+    if ydl_opts.get("postprocessors"):
+        ydl_opts["postprocessors"][0]["preferredquality"] = data
+    
+
+def codec_list(sender, data):
+    if data == TYPE[0]:
+        dpg.configure_item("bitrate",show=False)
+        dpg.configure_item("resolution",show=True)
+        ydl_opts["format"] = "bestvideo+bestaudio/best"
+        ydl_opts["postprocessors"] = [{
+            "key": "FFmpegVideoConvertor",
+            "preferedformat": "webm",
+        }]
+    elif data == TYPE[1]:
+        dpg.configure_item("bitrate",show=True)
+        dpg.configure_item("resolution",show=False)
+        ydl_opts["format"] = "bestaudio/best"
+        ydl_opts["postprocessors"] = [{
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": "mp3",
+            "preferredquality": "192",
+        }]
 
 def search_bar(sender,app_data):
     global URL
@@ -61,8 +80,11 @@ def analyze_button():
 
 
 def download_button():
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([URL])
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([URL])
+    except Exception as e:
+        notification(message=f"{e}")
 
 def main():
     dpg.create_context()
@@ -75,13 +97,17 @@ def main():
             dpg.add_input_text(readonly=True,height=100,multiline=True,tag="analyze_result")
             
             dpg.add_progress_bar(default_value=0.0,tag="progress",show=False)
-
+            dpg.add_combo(label="Bitrate", tag="bitrate", items=BITRATES,callback=bitrate_list,show=False)
+            dpg.add_combo(label="Resolution", tag="resolution", items=RESOLUTION,callback=resolution_list,show=False)
+        
             with dpg.group(horizontal=True):
-                dpg.add_combo(label="Codec",items=CODEC,callback=codec_list)
+                dpg.add_combo(label="Type",items=TYPE,callback=codec_list)
                 dpg.add_button(label="Download",callback=download_button)
 
+            #dpg.add_checkbox(label="DownloadThumbnail")
 
-    dpg.create_viewport(title='juicy', width=600, height=200)
+
+    dpg.create_viewport(title='juicy', width=600, height=300)
     dpg.setup_dearpygui()
     dpg.show_viewport()
     dpg.set_primary_window("f", True)
@@ -94,5 +120,8 @@ if __name__ == "__main__":
 #[x] - progress bar appear only when download is clicked
 #[x] - being able to change codec from combolist
 #[x] - add more info to analyze input
-#[] - show thumbnail
 #[x] - add finished sound
+#[x] - choose codec
+#[x] - choose bitrate
+#[x] - choose resolution
+#[] - show thumbnail

@@ -7,13 +7,8 @@ A minimal YouTube downloader built with **Python**, **Dear PyGui**, and **yt-dlp
 ## Features
 
 * Analyze a YouTube video before downloading
-* Display video title
-* Show uploader name
-* Show video duration
-* Show like count
-* Show comment count
-* Download the best available video quality
-* Download audio only
+* Display video information about title, comments, likes, views and duration
+* Choose between video or audio (able to change bitrate or resolution)
 * Play a notification sound when a download finishes
 * Real-time download progress bar
 * Simple and lightweight desktop interface
@@ -28,11 +23,12 @@ A minimal YouTube downloader built with **Python**, **Dear PyGui**, and **yt-dlp
 * `yt-dlp`
 * `dearpygui`
 * `pydub`
+* `ffmpeg`
 
 Install the dependencies:
 
 ```bash
-pip install yt-dlp dearpygui pydub
+pip install yt-dlp dearpygui pydub ffmpeg
 ```
 
 Downloaded files are saved in the `SavedFiles/` directory.
