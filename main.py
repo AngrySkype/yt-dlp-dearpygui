@@ -33,6 +33,7 @@ ydl_opts = {
     'outtmpl': f'{output_dir}/%(title)s.%(ext)s',
     'progress_hooks': [progress_hook],
     'writethumbnail': False,
+    'nopostoverwrites': False,
 }
 
 def resolution_list(sender, data):
@@ -78,7 +79,6 @@ def analyze_button():
     except Exception as e:
         notification(message=f"{e}")
 
-
 def download_button():
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -99,15 +99,17 @@ def main():
             dpg.add_progress_bar(default_value=0.0,tag="progress",show=False)
             dpg.add_combo(label="Bitrate", tag="bitrate", items=BITRATES,callback=bitrate_list,show=False)
             dpg.add_combo(label="Resolution", tag="resolution", items=RESOLUTION,callback=resolution_list,show=False)
-        
+
             with dpg.group(horizontal=True):
                 dpg.add_combo(label="Type",items=TYPE,callback=codec_list)
                 dpg.add_button(label="Download",callback=download_button)
 
-            #dpg.add_checkbox(label="DownloadThumbnail")
+            dpg.add_checkbox(label="TopMost", callback=lambda s, a: dpg.configure_item(dpg.set_viewport_always_top(a)))
+            dpg.add_checkbox(label="Download Thumbnail", callback=lambda s, a: ydl_opts.update({"writethumbnail": a}))
+            dpg.add_checkbox(label="Overwrite existing files", callback=lambda s, a: ydl_opts.update({"nopostoverwrites": a}))
 
 
-    dpg.create_viewport(title='juicy', width=600, height=300)
+    dpg.create_viewport(title='juicy', width=600, height=300, always_on_top = False)
     dpg.setup_dearpygui()
     dpg.show_viewport()
     dpg.set_primary_window("f", True)
