@@ -1,7 +1,10 @@
-import yt_dlp
-import dearpygui.dearpygui as dpg
-from pydub import AudioSegment
-from pydub.playback import play
+try:
+    import yt_dlp
+    import dearpygui.dearpygui as dpg
+    from pydub import AudioSegment
+    from pydub.playback import play
+except ImportError as e:
+    print("Missing packages!")
 
 audio = AudioSegment.from_mp3("Sounds/finish.mp3")
 
